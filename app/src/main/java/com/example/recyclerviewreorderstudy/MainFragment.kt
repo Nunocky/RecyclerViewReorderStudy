@@ -25,26 +25,29 @@ class MainViewModel : ViewModel() {
             ListItem(id = 9, title = "Item 9", sortOrder = 1),
             ListItem(id = 8, title = "Item 8", sortOrder = 2),
             ListItem(id = 7, title = "Item 7", sortOrder = 3),
-        ) // .sortedWith(compareBy { it.sortOrder }).toMutableList()
+        )
     }
 
     fun onItemMoved(fromPos: Int, toPos: Int) {
         Log.d("MainFragment", "onItemMoved : $fromPos -> $toPos")
-        // sortOrderは 1始まり、 fromPos/toPosは 0始まりとしている
-        // 以下に相当する操作をデータベースに対して行う。
+        // sortOrderは 1始まり、 fromPos/toPosは 0始まりとしている。
+        // 以下に相当する操作をデータベースに対しても行う。
         items.value?.sortedWith(compareBy { it.sortOrder })?.also {
             it[fromPos].sortOrder = toPos + 1
             it[toPos].sortOrder = fromPos + 1
         }
 
         // 確認用
-        items.value?.forEachIndexed() { n, item ->
-            Log.d("MainFragment", "  ${item.title}, sortOrder=${item.sortOrder}")
-        }
+//        items.value?.forEachIndexed() { n, item ->
+//            Log.d("MainFragment", "  ${item.title}, sortOrder=${item.sortOrder}")
+//        }
     }
 
     fun updateText(position: Int, text: String) {
-        items.value?.get(position)?.title = text
+        // 以下に相当する操作をデータベースに対しても行う。
+        items.value?.sortedWith(compareBy { it.sortOrder })?.also {
+            it[position].title = text
+        }
     }
 }
 
@@ -71,7 +74,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
                 // データベースを更新する
                 viewModel.updateText(position, text)
-                adapter.notifyItemChanged(position)
+//                adapter.notifyItemChanged(position) // エラーになる
             }
         }
 
