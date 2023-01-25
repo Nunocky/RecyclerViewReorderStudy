@@ -15,17 +15,17 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
 
-        val items = arrayListOf(
+        val items = listOf(
+            ListItem(id = 4, title = "Item 4", sortOrder = 6),
+            ListItem(id = 3, title = "Item 3", sortOrder = 7),
+            ListItem(id = 2, title = "Item 2", sortOrder = 8),
+            ListItem(id = 1, title = "Item 1", sortOrder = 9),
             ListItem(id = 9, title = "Item 9", sortOrder = 1),
             ListItem(id = 8, title = "Item 8", sortOrder = 2),
             ListItem(id = 7, title = "Item 7", sortOrder = 3),
             ListItem(id = 6, title = "Item 6", sortOrder = 4),
             ListItem(id = 5, title = "Item 5", sortOrder = 5),
-            ListItem(id = 4, title = "Item 4", sortOrder = 6),
-            ListItem(id = 3, title = "Item 3", sortOrder = 7),
-            ListItem(id = 2, title = "Item 2", sortOrder = 8),
-            ListItem(id = 1, title = "Item 1", sortOrder = 9),
-        )
+        ).sortedWith(compareBy { it.sortOrder }).toMutableList()
 
         adapter = ListItemAdapter(items)
         recyclerView.adapter = adapter
@@ -41,10 +41,21 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     val fromPos = viewHolder.adapterPosition //  bindingAdapterPosition
                     val toPos = target.adapterPosition  //bindingAdapterPosition
                     adapter.notifyItemMoved(fromPos, toPos)
-
-                    // itemsの並びが変更になったらデータベースを更新する
-
                     return true
+                }
+
+                override fun onMoved(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    fromPos: Int,
+                    target: RecyclerView.ViewHolder,
+                    toPos: Int,
+                    x: Int,
+                    y: Int
+                ) {
+                    super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
+                    // itemsの並びが変更になったらデータベースを更新する
+                    Log.d("MainFragment", "itemsの並びが変更された")
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -53,6 +64,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         )
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+        // テキスト変更のコールバック
         adapter.callback = object : ListItemAdapter.Callback {
             override fun onTextChanged(position: Int, text: String) {
                 Log.d("MainFragment", "$position 番目のアイテム  テキスト変更 → $text")

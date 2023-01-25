@@ -10,10 +10,14 @@ import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 
-class ListItemAdapter(private val dataSet: ArrayList<ListItem>) :
+class ListItemAdapter(private val dataSet: MutableList<ListItem>) :
     RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder>() {
 
     interface Callback {
+        /**
+         * @param position itemsの表示位置
+         * @param text 更新後のテキスト
+         */
         fun onTextChanged(position: Int, text: String)
     }
 
