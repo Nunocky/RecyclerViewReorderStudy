@@ -7,13 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
-
-// TODO テキスト編集完了時のコールバック (「x番目のテキストが xxxになった」)  → 画面の終了時にまとめて処理すればいい?
-//      ソフトウェアキーボードを閉じるとき EditTextへのフォーカスを外す
 
 class ListItemAdapter(private val dataSet: ArrayList<ListItem>) :
     RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder>() {
+
+    interface Callback {
+        fun onTextChanged(position: Int, text: String)
+    }
+
+    var callback : Callback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
@@ -41,11 +45,25 @@ class ListItemAdapter(private val dataSet: ArrayList<ListItem>) :
         val listItem = dataSet[position]
 
         holder.etTitle.setText(listItem.title)
+
+        holder.onTextChanged = {}
+        holder.etTitle.setText(dataSet[position].title)
+        holder.onTextChanged = {
+            dataSet[position].title = it
+            callback?.onTextChanged(position, it)
+        }
     }
 
     override fun getItemCount(): Int = dataSet.size
 
-    class ListItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    class ListItemViewHolder(private val view: View, var onTextChanged: ((String) -> Unit) = {}) :
+        RecyclerView.ViewHolder(view) {
         val etTitle: EditText = view.findViewById(R.id.etTitle)
+
+        init {
+            etTitle.doOnTextChanged { text, _, _, _ ->
+                onTextChanged(text.toString())
+            }
+        }
     }
 }

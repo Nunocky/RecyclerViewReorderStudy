@@ -1,6 +1,7 @@
 package com.example.recyclerviewreorderstudy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -29,6 +30,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         adapter = ListItemAdapter(items)
         recyclerView.adapter = adapter
 
+        // RecyclerViewのアイテムをドラッグ操作で並べ替える
         val itemTouchHelper = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
                 override fun onMove(
@@ -50,5 +52,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         )
         itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        adapter.callback = object : ListItemAdapter.Callback {
+            override fun onTextChanged(position: Int, text: String) {
+                Log.d("MainFragment", "$position 番目のアイテム  テキスト変更 → $text")
+
+                // データベースを更新する
+            }
+        }
     }
 }
