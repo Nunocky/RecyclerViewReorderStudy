@@ -8,17 +8,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListItem>() {
-    override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-        return oldItem == newItem
-    }
+//private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListItem>() {
+//    override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
+//        return oldItem == newItem
+//    }
+//
+//    override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
+//        return oldItem.id == newItem.id
+//    }
+//}
 
-    override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-        return oldItem.id == newItem.id
-    }
-}
-
-class ListItemAdapter : ListAdapter<ListItem, ListItemAdapter.ListItemViewHolder>(DIFF_CALLBACK) {
+class ListItemAdapter(private val dataSet: ArrayList<ListItem>) : RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
@@ -26,9 +26,11 @@ class ListItemAdapter : ListAdapter<ListItem, ListItemAdapter.ListItemViewHolder
     }
 
     override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
-        val listItem = getItem(position)
+        val listItem = dataSet[position]
         holder.textValue = listItem.title
     }
+
+    override fun getItemCount(): Int = dataSet.size
 
     class ListItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         var textValue: String
