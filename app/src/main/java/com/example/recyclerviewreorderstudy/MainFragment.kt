@@ -29,7 +29,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         adapter = ListItemAdapter(items)
         recyclerView.adapter = adapter
 
-        val itemTouchHelperCallback =
+        val itemTouchHelper = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
                 override fun onMove(
                     recyclerView: RecyclerView,
@@ -40,6 +40,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     val toPos = target.adapterPosition  //bindingAdapterPosition
                     adapter.notifyItemMoved(fromPos, toPos)
 
+                    // itemsの並びが変更になったらデータベースを更新する
 
                     return true
                 }
@@ -47,8 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 }
             }
-
-        val mIth = ItemTouchHelper(itemTouchHelperCallback)
-        mIth.attachToRecyclerView(recyclerView)
+        )
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 }
