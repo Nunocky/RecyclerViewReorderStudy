@@ -10,7 +10,7 @@ import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 
-class ListItemAdapter(private val dataSet: MutableList<ListItem>) :
+class ListItemAdapter() :
     RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder>() {
 
     interface Callback {
@@ -21,7 +21,15 @@ class ListItemAdapter(private val dataSet: MutableList<ListItem>) :
         fun onTextChanged(position: Int, text: String)
     }
 
+    private val dataSet = mutableListOf<ListItem>()
+
     var callback : Callback? = null
+
+    fun setData(newItems : List<ListItem>) {
+        dataSet.clear()
+        dataSet.addAll(newItems)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
@@ -53,7 +61,7 @@ class ListItemAdapter(private val dataSet: MutableList<ListItem>) :
         holder.onTextChanged = {}
         holder.etTitle.setText(dataSet[position].title)
         holder.onTextChanged = {
-            dataSet[position].title = it
+            // dataSet[position].title = it
             callback?.onTextChanged(position, it)
         }
     }
