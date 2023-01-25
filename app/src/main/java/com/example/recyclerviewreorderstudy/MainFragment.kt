@@ -15,6 +15,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.recyclerView)
 
+        // 表示する項目。 sortOrderの順に表示する
         val items = listOf(
             ListItem(id = 4, title = "Item 4", sortOrder = 6),
             ListItem(id = 3, title = "Item 3", sortOrder = 7),
@@ -54,8 +55,18 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     y: Int
                 ) {
                     super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-                    // itemsの並びが変更になったらデータベースを更新する
-                    Log.d("MainFragment", "itemsの並びが変更された")
+                    Log.d("MainFragment", "itemsの並びが変更された: $fromPos → $toPos")
+
+                    // 以下に相当する操作をデータベースに対して行う。
+                    val item = items[fromPos]
+                    items.removeAt(fromPos)
+                    items.add(toPos, item)
+                    items.forEachIndexed { index, it ->
+                        it.sortOrder = index
+                    }
+                    items.forEachIndexed { index, it ->
+                        Log.d("MainFragment", "  $index  ${it.title}, sortOrder=${it.sortOrder}")
+                    }
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
