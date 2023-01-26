@@ -10,7 +10,10 @@ import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 
-class ListItemAdapter() :
+/**
+ * RecyclerView用のリストアダプタ
+ */
+class ListItemAdapter :
     RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder>() {
 
     interface Callback {
@@ -68,7 +71,7 @@ class ListItemAdapter() :
 
     override fun getItemCount(): Int = dataSet.size
 
-    class ListItemViewHolder(private val view: View, var onTextChanged: ((String) -> Unit) = {}) :
+    class ListItemViewHolder(view: View, var onTextChanged: ((String) -> Unit) = {}) :
         RecyclerView.ViewHolder(view) {
         val etTitle: EditText = view.findViewById(R.id.etTitle)
 
